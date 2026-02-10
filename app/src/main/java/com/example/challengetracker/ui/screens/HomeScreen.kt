@@ -24,11 +24,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        Text(
-            text = "Challenge Tracker",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-        )
         if (challenges.size > 5) {
             Card(
                 modifier = Modifier

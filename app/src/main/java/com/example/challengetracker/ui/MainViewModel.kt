@@ -18,8 +18,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.DayOfWeek
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
@@ -90,19 +88,6 @@ class MainViewModel(private val repository: ChallengeRepository) : ViewModel() {
         }
     }
 
-    fun submitCheckInForDate(challengeId: Long, date: String, didSucceed: Boolean, note: String?) {
-        if (date.isBlank()) return
-        viewModelScope.launch {
-            val checkIn = CheckInEntity(
-                challengeId = challengeId,
-                date = date.trim(),
-                didSucceed = didSucceed,
-                note = note?.ifBlank { null }
-            )
-            repository.addCheckIn(checkIn)
-        }
-    }
-
     fun toggleDarkMode(enabled: Boolean) {
         settingsState.update { it.copy(darkModeEnabled = enabled) }
     }
@@ -115,16 +100,8 @@ class MainViewModel(private val repository: ChallengeRepository) : ViewModel() {
         settingsState.update { it.copy(dailyReminderEnabled = enabled) }
     }
 
-    fun updateDailyReminderTime(time: LocalTime) {
-        settingsState.update { it.copy(dailyReminderTime = time) }
-    }
-
     fun updateWeeklyReview(enabled: Boolean) {
         settingsState.update { it.copy(weeklyReviewEnabled = enabled) }
-    }
-
-    fun updateWeeklyReviewDay(day: DayOfWeek) {
-        settingsState.update { it.copy(weeklyReviewDay = day) }
     }
 
     fun createChallenge(challenge: ChallengeEntity) {

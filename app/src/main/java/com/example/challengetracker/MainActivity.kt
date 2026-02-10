@@ -154,8 +154,6 @@ private fun ChallengeTrackerApp(viewModel: MainViewModel, pendingCheckInIdState:
                             onWeeklyReviewToggle = viewModel::updateWeeklyReview,
                             onThresholdChange = viewModel::updateDefaultThreshold,
                             onDarkModeToggle = viewModel::toggleDarkMode,
-                            onDailyReminderTimeChange = viewModel::updateDailyReminderTime,
-                            onWeeklyReviewDayChange = viewModel::updateWeeklyReviewDay,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -172,9 +170,6 @@ private fun ChallengeTrackerApp(viewModel: MainViewModel, pendingCheckInIdState:
                                     viewModel.deleteChallenge(detail.overview.id)
                                     viewModel.closeDetails()
                                     screen = Screen.Home
-                                },
-                                onLogCheckIn = { date, didSucceed, note ->
-                                    viewModel.submitCheckInForDate(detail.overview.id, date, didSucceed, note)
                                 },
                                 modifier = Modifier.fillMaxSize()
                             )

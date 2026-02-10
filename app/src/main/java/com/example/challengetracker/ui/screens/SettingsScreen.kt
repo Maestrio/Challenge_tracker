@@ -17,9 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.challengetracker.model.SettingsState
-import java.time.DayOfWeek
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun SettingsScreen(
@@ -28,19 +25,10 @@ fun SettingsScreen(
     onWeeklyReviewToggle: (Boolean) -> Unit,
     onThresholdChange: (Int) -> Unit,
     onDarkModeToggle: (Boolean) -> Unit,
-    onDailyReminderTimeChange: (LocalTime) -> Unit,
-    onWeeklyReviewDayChange: (DayOfWeek) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val thresholdState = remember(settings.defaultSuccessThreshold) {
         mutableStateOf(settings.defaultSuccessThreshold.toString())
-    }
-    val timeFormatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
-    val dailyTimeState = remember(settings.dailyReminderTime) {
-        mutableStateOf(settings.dailyReminderTime.format(timeFormatter))
-    }
-    val weeklyDayState = remember(settings.weeklyReviewDay) {
-        mutableStateOf(settings.weeklyReviewDay.name.lowercase().replaceFirstChar { it.uppercase() })
     }
 
     Column(
@@ -55,13 +43,10 @@ fun SettingsScreen(
             onCheckedChange = onDailyReminderToggle
         )
         OutlinedTextField(
-            value = dailyTimeState.value,
-            onValueChange = { value ->
-                dailyTimeState.value = value
-                runCatching { LocalTime.parse(value, timeFormatter) }
-                    .onSuccess { onDailyReminderTimeChange(it) }
-            },
+            value = settings.dailyReminderTime.toString(),
+            onValueChange = { },
             label = { Text("Daily reminder time") },
+            readOnly = true,
             modifier = Modifier.fillMaxWidth()
         )
         SettingToggleRow(
@@ -70,12 +55,10 @@ fun SettingsScreen(
             onCheckedChange = onWeeklyReviewToggle
         )
         OutlinedTextField(
-            value = weeklyDayState.value,
-            onValueChange = { value ->
-                weeklyDayState.value = value
-                parseDayOfWeek(value)?.let(onWeeklyReviewDayChange)
-            },
+            value = settings.weeklyReviewDay.name.lowercase().replaceFirstChar { it.uppercase() },
+            onValueChange = { },
             label = { Text("Weekly review day") },
+            readOnly = true,
             modifier = Modifier.fillMaxWidth()
         )
         SettingToggleRow(
@@ -114,9 +97,4 @@ private fun SettingToggleRow(
         Text(text = label)
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
-}
-
-private fun parseDayOfWeek(value: String): DayOfWeek? {
-    val normalized = value.trim().uppercase()
-    return DayOfWeek.entries.firstOrNull { it.name == normalized }
 }

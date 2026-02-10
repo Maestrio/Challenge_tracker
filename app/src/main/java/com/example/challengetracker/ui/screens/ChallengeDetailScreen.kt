@@ -16,11 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +33,6 @@ fun ChallengeDetailScreen(
     detail: ChallengeDetail,
     onArchive: () -> Unit,
     onDelete: () -> Unit,
-    onLogCheckIn: (String, Boolean, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val overview = detail.overview
@@ -47,10 +43,6 @@ fun ChallengeDetailScreen(
         successThreshold = overview.successThreshold,
         checkIns = checkIns
     )
-
-    val logDateState = remember(overview.startDate) { mutableStateOf(overview.startDate.toString()) }
-    val logNoteState = remember { mutableStateOf("") }
-    val logDidSucceed = remember { mutableStateOf(true) }
 
     LazyColumn(
         modifier = modifier.padding(16.dp),
@@ -138,53 +130,6 @@ fun ChallengeDetailScreen(
             } else {
                 slipNotes.forEach { note ->
                     Text(text = "${note.date}: ${note.note}")
-                }
-            }
-        }
-        item {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "Edit past day", style = MaterialTheme.typography.titleSmall)
-                    OutlinedTextField(
-                        value = logDateState.value,
-                        onValueChange = { logDateState.value = it },
-                        label = { Text("Date (YYYY-MM-DD)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Button(
-                            onClick = { logDidSucceed.value = true },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Yes")
-                        }
-                        Button(
-                            onClick = { logDidSucceed.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "No")
-                        }
-                    }
-                    OutlinedTextField(
-                        value = logNoteState.value,
-                        onValueChange = { logNoteState.value = it },
-                        label = { Text("What happened? (optional)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = {
-                            onLogCheckIn(
-                                logDateState.value,
-                                logDidSucceed.value,
-                                logNoteState.value.ifBlank { null }
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Save check-in")
-                    }
                 }
             }
         }
